@@ -240,3 +240,6 @@ ul {
     margin: 10px;
   }
 }
+
+
+/* width = 790 then center the save item text in the box, but don't override the other style when it gets smaller */
