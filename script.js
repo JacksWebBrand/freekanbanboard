@@ -61,10 +61,11 @@ function createItemEl(columnEl, column, item, index) {
   listEl.classList.add('drag-item');
   listEl.textContent = item;
   listEl.draggable = true;
-  listEl.setAttribute('ondragstart', 'drag(event)');
-  listEl.contentEditable = true;
-  listEl.id = index;
   listEl.setAttribute('onfocusout', `updateItem(${index}, ${column})`);
+  listEl.setAttribute('ondragstart', 'drag(event)');
+  listEl.setAttribute('onclick', 'editable(event)');
+  // listEl.contentEditable = true;
+  listEl.id = index;
   // Append
   columnEl.appendChild(listEl);
 }
@@ -108,11 +109,15 @@ function updateDOM() {
 function updateItem(id, column) {
   const selectedArray = listArrays[column];
   const selectedColumnEl = listColumns[column].children;
+  selectedArray[id] = selectedColumnEl[id].textContent;
+  if (selectedArray[id] === selectedColumnEl[id].textContent) {
+    updateDOM()
+  }
   if (!dragging) {
     if (!selectedColumnEl[id].textContent) {
       delete selectedArray[id];
     } else {
-      selectedArray[id] = selectedColumnEl[id].textContent 
+      selectedArray[id] = selectedColumnEl[id].textContent;
     }
     updateDOM();
   }
@@ -144,7 +149,7 @@ function hideInputBox(column) {
 
 // Allows arrays to reflect Drag and Drop items
 function rebuildArrays() {
-  backlogListArray = Array.from(backlogList.children).map(i => i.textContent);
+  backlogListArray = Array.from(backlogList.children).map(i => i.textContent); // faster than foreach where the array is changing
   progressListArray = Array.from(progressList.children).map(i => i.textContent);
   completeListArray = Array.from(completeList.children).map(i => i.textContent);
   onHoldListArray = Array.from(onHoldList.children).map(i => i.textContent);
@@ -182,6 +187,11 @@ function drop(e) {
   // Draggin complete
   dragging = true;
   rebuildArrays();
+}
+
+function editable(e) {
+  e.target.contentEditable = true;
+  e.target.focus();
 }
 
 // On load
